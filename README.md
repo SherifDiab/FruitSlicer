@@ -12,7 +12,7 @@ This project is based on the [Zigurous Fruit Ninja Tutorial](https://github.com/
 
 ## Requirements
 
-- **Unity Version**: 6000.0.32f1 (Unity 6) or later
+- **Unity Version**: 6000.3.2f1 (Unity 6) or later
 - **Android Build Support**: Install via Unity Hub
 - **JDK**: OpenJDK 17 (included with Unity 6)
 - **Android SDK**: API Level 24+ (Android 7.0 Nougat)
@@ -22,7 +22,7 @@ This project is based on the [Zigurous Fruit Ninja Tutorial](https://github.com/
 
 ## Quick Start
 
-1. Open the project in Unity 6 (6000.0.32f1 or later)
+1. Open the project in Unity 6 (6000.3.2f1 or later)
 2. Install the Google Mobile Ads Unity Plugin (see below)
 3. Go to **Build > Configure Android Settings** from the menu
 4. Build using **Build > Build Android APK** or **Build > Build Android AAB**
