@@ -1,13 +1,17 @@
 using System;
 using UnityEngine;
 
-#if UNITY_ANDROID
+#if GOOGLE_MOBILE_ADS
 using GoogleMobileAds.Api;
 #endif
 
 /// <summary>
 /// Manages AdMob advertisements for the Fruit Slicer game.
 /// Supports Banner, Interstitial, and Rewarded ads.
+///
+/// IMPORTANT: You must install the Google Mobile Ads Unity plugin for this to work.
+/// Download from: https://github.com/googleads/googleads-mobile-unity/releases
+/// After importing, the GOOGLE_MOBILE_ADS scripting define symbol will be automatically added.
 /// </summary>
 public class AdMobManager : MonoBehaviour
 {
@@ -20,9 +24,23 @@ public class AdMobManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private bool showBannerOnStart = true;
-    [SerializeField] private AdPosition bannerPosition = AdPosition.Bottom;
+    [SerializeField] private BannerAdPosition bannerPosition = BannerAdPosition.Bottom;
 
-#if UNITY_ANDROID
+    /// <summary>
+    /// Banner position enum (mirrors Google's AdPosition when SDK is not installed)
+    /// </summary>
+    public enum BannerAdPosition
+    {
+        Top = 0,
+        Bottom = 1,
+        TopLeft = 2,
+        TopRight = 3,
+        BottomLeft = 4,
+        BottomRight = 5,
+        Center = 6
+    }
+
+#if GOOGLE_MOBILE_ADS
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
     private RewardedAd rewardedAd;
@@ -46,7 +64,7 @@ public class AdMobManager : MonoBehaviour
 
     private void Start()
     {
-#if UNITY_ANDROID
+#if GOOGLE_MOBILE_ADS
         // Initialize the Google Mobile Ads SDK
         MobileAds.Initialize(initStatus =>
         {
@@ -61,11 +79,19 @@ public class AdMobManager : MonoBehaviour
             RequestRewardedAd();
         });
 #else
-        Debug.Log("AdMob is only supported on Android in this build");
+        Debug.LogWarning("Google Mobile Ads SDK is not installed. Please import the SDK from: https://github.com/googleads/googleads-mobile-unity/releases");
 #endif
     }
 
-#if UNITY_ANDROID
+#if GOOGLE_MOBILE_ADS
+    /// <summary>
+    /// Converts our BannerAdPosition enum to Google's AdPosition
+    /// </summary>
+    private AdPosition ConvertBannerPosition(BannerAdPosition position)
+    {
+        return (AdPosition)(int)position;
+    }
+
     #region Banner Ads
 
     /// <summary>
@@ -80,14 +106,14 @@ public class AdMobManager : MonoBehaviour
         }
 
         // Create a banner view
-        bannerView = new BannerView(bannerAdUnitId, AdSize.Banner, bannerPosition);
+        bannerView = new BannerView(bannerAdUnitId, AdSize.Banner, ConvertBannerPosition(bannerPosition));
 
         // Register for ad events
-        bannerView.OnAdLoaded += HandleBannerAdLoaded;
-        bannerView.OnAdFailedToLoad += HandleBannerAdFailedToLoad;
+        bannerView.OnBannerAdLoaded += HandleBannerAdLoaded;
+        bannerView.OnBannerAdLoadFailed += HandleBannerAdFailedToLoad;
 
         // Create an ad request
-        AdRequest request = new AdRequest.Builder().Build();
+        AdRequest request = new AdRequest();
 
         // Load the banner ad
         bannerView.LoadAd(request);
@@ -115,14 +141,14 @@ public class AdMobManager : MonoBehaviour
         }
     }
 
-    private void HandleBannerAdLoaded(object sender, EventArgs args)
+    private void HandleBannerAdLoaded()
     {
         Debug.Log("Banner ad loaded successfully");
     }
 
-    private void HandleBannerAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+    private void HandleBannerAdFailedToLoad(LoadAdError error)
     {
-        Debug.LogError($"Banner ad failed to load: {args.LoadAdError.GetMessage()}");
+        Debug.LogError($"Banner ad failed to load: {error.GetMessage()}");
     }
 
     #endregion
@@ -141,7 +167,7 @@ public class AdMobManager : MonoBehaviour
         }
 
         // Create an ad request
-        AdRequest request = new AdRequest.Builder().Build();
+        AdRequest request = new AdRequest();
 
         // Load the interstitial ad
         InterstitialAd.Load(interstitialAdUnitId, request, (InterstitialAd ad, LoadAdError error) =>
@@ -208,7 +234,7 @@ public class AdMobManager : MonoBehaviour
     public void RequestRewardedAd()
     {
         // Create an ad request
-        AdRequest request = new AdRequest.Builder().Build();
+        AdRequest request = new AdRequest();
 
         // Load the rewarded ad
         RewardedAd.Load(rewardedAdUnitId, request, (RewardedAd ad, LoadAdError error) =>
@@ -271,11 +297,23 @@ public class AdMobManager : MonoBehaviour
     }
 
     #endregion
+
+#else
+    // Stub methods when SDK is not installed
+    public void RequestBannerAd() { Debug.LogWarning("AdMob SDK not installed"); }
+    public void ShowBannerAd() { Debug.LogWarning("AdMob SDK not installed"); }
+    public void HideBannerAd() { Debug.LogWarning("AdMob SDK not installed"); }
+    public void RequestInterstitialAd() { Debug.LogWarning("AdMob SDK not installed"); }
+    public void ShowInterstitialAd() { Debug.LogWarning("AdMob SDK not installed"); }
+    public bool IsInterstitialReady() { return false; }
+    public void RequestRewardedAd() { Debug.LogWarning("AdMob SDK not installed"); }
+    public void ShowRewardedAd() { OnRewardedAdFailed?.Invoke(); }
+    public bool IsRewardedAdReady() { return false; }
 #endif
 
     private void OnDestroy()
     {
-#if UNITY_ANDROID
+#if GOOGLE_MOBILE_ADS
         // Clean up ad resources
         bannerView?.Destroy();
         interstitialAd?.Destroy();
