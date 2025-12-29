@@ -40,12 +40,8 @@ public class AndroidBuildHelper : MonoBehaviour
         // Target ARM64 architecture for modern devices (ARMv7 is deprecated in Unity 6)
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
-        // Enable custom gradle templates
-        PlayerSettings.Android.useCustomGradlePropertiesTemplate = true;
-        PlayerSettings.Android.useCustomMainGradleTemplate = true;
-        PlayerSettings.Android.useCustomBaseGradleTemplate = true;
-        PlayerSettings.Android.useCustomSettingsTemplate = true;
-        PlayerSettings.Android.useCustomMainManifest = true;
+        // Note: In Unity 6, custom gradle templates in Plugins/Android are automatically detected
+        // The useCustom* properties have been removed from the API
 
         // Set screen orientation
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
