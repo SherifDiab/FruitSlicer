@@ -12,15 +12,17 @@ This project is based on the [Zigurous Fruit Ninja Tutorial](https://github.com/
 
 ## Requirements
 
-- **Unity Version**: 2020.3.48f1 LTS (or compatible version)
+- **Unity Version**: 6000.0.32f1 (Unity 6) or later
 - **Android Build Support**: Install via Unity Hub
-- **JDK**: OpenJDK 8 or 11 (included with Unity)
-- **Android SDK**: API Level 21+ (Android 5.0 Lollipop)
-- **Target SDK**: API Level 33 (Android 13)
+- **JDK**: OpenJDK 17 (included with Unity 6)
+- **Android SDK**: API Level 24+ (Android 7.0 Nougat)
+- **Target SDK**: API Level 34 (Android 14)
+- **Gradle**: 8.4+ (included with Unity 6)
+- **Android Gradle Plugin**: 8.3.0+
 
 ## Quick Start
 
-1. Open the project in Unity 2020.3.x LTS
+1. Open the project in Unity 6 (6000.0.32f1 or later)
 2. Install the Google Mobile Ads Unity Plugin (see below)
 3. Go to **Build > Configure Android Settings** from the menu
 4. Build using **Build > Build Android APK** or **Build > Build Android AAB**
@@ -54,18 +56,19 @@ Before building, you need to install the Google Mobile Ads Unity SDK:
 
 ### Setting Up Android SDK
 
-1. Open **Edit > Preferences > External Tools** (Windows/Linux) or **Unity > Preferences > External Tools** (macOS)
+1. Open **Edit > Preferences > External Tools** (Windows/Linux) or **Unity > Settings > External Tools** (macOS)
 
 2. Verify the following paths are set:
-   - **JDK**: Use Unity's bundled JDK or set path to JDK 8/11
+   - **JDK**: Use Unity's bundled JDK 17 (recommended for Unity 6)
    - **Android SDK**: Path to your Android SDK
-   - **Android NDK**: Path to your Android NDK (for IL2CPP builds)
+   - **Android NDK**: Path to your Android NDK (required for IL2CPP builds in Unity 6)
 
 3. Install required SDK components via Android SDK Manager:
-   - Android SDK Platform 33 (API 33)
-   - Android SDK Build-Tools 30.0.3+
+   - Android SDK Platform 34 (API 34)
+   - Android SDK Build-Tools 34.0.0+
    - Android SDK Platform-Tools
-   - NDK (Side by side) - latest version
+   - Android SDK Command-line Tools
+   - NDK (Side by side) 26.1+
 
 ### Build Settings
 
@@ -77,8 +80,10 @@ Before building, you need to install the Google Mobile Ads Unity SDK:
    - **Company Name**: FruitSlicer
    - **Product Name**: Fruit Slicer
    - **Package Name**: com.fruitslicer.game
-   - **Minimum API Level**: Android 5.0 (API 21)
-   - **Target API Level**: Android 13 (API 33)
+   - **Minimum API Level**: Android 7.0 (API 24) - Required for Unity 6
+   - **Target API Level**: Android 14 (API 34) - Required for Google Play
+   - **Scripting Backend**: IL2CPP (required for Unity 6 on Android)
+   - **Target Architectures**: ARM64 (ARMv7 is deprecated in Unity 6)
 
 ### Building APK
 

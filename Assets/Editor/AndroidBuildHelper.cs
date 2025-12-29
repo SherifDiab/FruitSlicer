@@ -6,6 +6,7 @@ using System.IO;
 /// <summary>
 /// Helper script for Android build configuration.
 /// Provides menu items and build settings for the Fruit Slicer game.
+/// Updated for Unity 6 compatibility.
 /// </summary>
 public class AndroidBuildHelper : MonoBehaviour
 {
@@ -22,27 +23,28 @@ public class AndroidBuildHelper : MonoBehaviour
         PlayerSettings.companyName = COMPANY_NAME;
         PlayerSettings.productName = PRODUCT_NAME;
 
-        // Set Android specific settings
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, BUNDLE_IDENTIFIER);
+        // Set Android specific settings using NamedBuildTarget for Unity 6
+        PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, BUNDLE_IDENTIFIER);
         PlayerSettings.Android.bundleVersionCode = BUNDLE_VERSION_CODE;
         PlayerSettings.bundleVersion = BUNDLE_VERSION;
 
-        // Set minimum SDK version (API 21 = Android 5.0 Lollipop)
-        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel21;
+        // Set minimum SDK version (API 24 = Android 7.0 Nougat - required for Unity 6)
+        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
 
-        // Set target SDK version (API 33 = Android 13)
-        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel33;
+        // Set target SDK version (API 34 = Android 14 - required for Google Play 2024+)
+        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel34;
 
-        // Use IL2CPP for better performance
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        // Use IL2CPP for better performance (required for Unity 6 on Android)
+        PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
 
-        // Target ARM64 architecture for modern devices
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
+        // Target ARM64 architecture for modern devices (ARMv7 is deprecated in Unity 6)
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
         // Enable custom gradle templates
         PlayerSettings.Android.useCustomGradlePropertiesTemplate = true;
         PlayerSettings.Android.useCustomMainGradleTemplate = true;
         PlayerSettings.Android.useCustomBaseGradleTemplate = true;
+        PlayerSettings.Android.useCustomSettingsTemplate = true;
         PlayerSettings.Android.useCustomMainManifest = true;
 
         // Set screen orientation
@@ -55,8 +57,8 @@ public class AndroidBuildHelper : MonoBehaviour
         // Require internet access for AdMob
         PlayerSettings.Android.forceInternetPermission = true;
 
-        Debug.Log("Android settings configured successfully!");
-        EditorUtility.DisplayDialog("Success", "Android build settings have been configured!", "OK");
+        Debug.Log("Android settings configured successfully for Unity 6!");
+        EditorUtility.DisplayDialog("Success", "Android build settings have been configured for Unity 6!", "OK");
     }
 
     [MenuItem("Build/Build Android APK")]

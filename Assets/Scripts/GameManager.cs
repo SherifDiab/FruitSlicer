@@ -50,13 +50,13 @@ public class GameManager : MonoBehaviour
 
     private void ClearScene()
     {
-        Fruit[] fruits = FindObjectsOfType<Fruit>();
+        Fruit[] fruits = FindObjectsByType<Fruit>(FindObjectsSortMode.None);
 
         foreach (Fruit fruit in fruits) {
             Destroy(fruit.gameObject);
         }
 
-        Bomb[] bombs = FindObjectsOfType<Bomb>();
+        Bomb[] bombs = FindObjectsByType<Bomb>(FindObjectsSortMode.None);
 
         foreach (Bomb bomb in bombs) {
             Destroy(bomb.gameObject);

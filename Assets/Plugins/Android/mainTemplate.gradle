@@ -6,26 +6,28 @@ apply plugin: 'com.android.library'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Google Mobile Ads SDK
-    implementation 'com.google.android.gms:play-services-ads:22.6.0'
+    // Google Mobile Ads SDK (latest version compatible with Unity 6)
+    implementation 'com.google.android.gms:play-services-ads:23.5.0'
 
     // Required for AdMob
-    implementation 'com.google.android.gms:play-services-base:18.3.0'
+    implementation 'com.google.android.gms:play-services-base:18.5.0'
 
 **DEPS**}
 
 android {
-    compileSdkVersion **APIVERSION**
+    namespace "com.unity3d.player"
+    ndkPath "**NDKPATH**"
+    compileSdk **APIVERSION**
     buildToolsVersion '**BUILDTOOLS**'
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     defaultConfig {
-        minSdkVersion **MINSDKVERSION**
-        targetSdkVersion **TARGETSDKVERSION**
+        minSdk **MINSDKVERSION**
+        targetSdk **TARGETSDKVERSION**
         ndk {
             abiFilters **ABIFILTERS**
         }
@@ -34,13 +36,13 @@ android {
         consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
     }
 
-    lintOptions {
+    lint {
         abortOnError false
     }
 
-    aaptOptions {
-        noCompress = ['.ress', '.resource', '.obb'] + unityStreamingAssets.tokenize(', ')
-        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    androidResources {
+        noCompress = ['.ress', '.resource', '.obb']**STREAMING_ASSETS**
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
     }**PACKAGING_OPTIONS**
 }**REPOSITORIES****SOURCE_BUILD_SETUP**
 **EXTERNAL_SOURCES**
