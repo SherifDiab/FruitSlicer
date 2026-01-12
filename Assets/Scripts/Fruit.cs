@@ -9,7 +9,14 @@ public class Fruit : MonoBehaviour
     private Collider fruitCollider;
     private ParticleSystem juiceEffect;
 
+    [Header("Points")]
     public int points = 1;
+
+    [Header("Missed Fruit Detection")]
+    [SerializeField] private float missedYPosition = -10f;
+
+    private bool hasBeenSliced = false;
+    private bool hasMissed = false;
 
     private void Awake()
     {
@@ -18,8 +25,29 @@ public class Fruit : MonoBehaviour
         juiceEffect = GetComponentInChildren<ParticleSystem>();
     }
 
+    private void Update()
+    {
+        // Check if fruit fell below screen (missed)
+        if (!hasBeenSliced && !hasMissed && transform.position.y < missedYPosition)
+        {
+            hasMissed = true;
+            OnMissed();
+        }
+    }
+
+    private void OnMissed()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnFruitMissed();
+        }
+    }
+
     private void Slice(Vector3 direction, Vector3 position, float force)
     {
+        if (hasBeenSliced) return;
+        hasBeenSliced = true;
+
         GameManager.Instance.IncreaseScore(points);
 
         // Disable the whole fruit
@@ -28,7 +56,12 @@ public class Fruit : MonoBehaviour
 
         // Enable the sliced fruit
         sliced.SetActive(true);
-        juiceEffect.Play();
+
+        // Play juice effect
+        if (juiceEffect != null)
+        {
+            juiceEffect.Play();
+        }
 
         // Rotate based on the slice angle
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -52,5 +85,4 @@ public class Fruit : MonoBehaviour
             Slice(blade.direction, blade.transform.position, blade.sliceForce);
         }
     }
-
 }
