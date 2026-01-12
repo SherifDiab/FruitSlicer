@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://fruit_half_scene"]
+
+[ext_resource type="Script" path="res://scripts/fruit_half.gd" id="1_fruit_half"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_half"]
+radius = 25.0
+
+[node name="FruitHalf" type="RigidBody2D"]
+collision_layer = 8
+collision_mask = 1
+gravity_scale = 2.0
+script = ExtResource("1_fruit_half")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_half")
+
+[node name="JuiceParticles" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 8
+one_shot = true
+explosiveness = 0.8
+lifetime = 0.4

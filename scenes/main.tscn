@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://main_scene"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/blade.gd" id="2_blade"]
+[ext_resource type="Script" path="res://scripts/spawner.gd" id="3_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_ui.tscn" id="4_ui"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.15, 0.2, 1)
+
+[node name="GameArea" type="Node2D" parent="."]
+
+[node name="Blade" type="Node2D" parent="GameArea"]
+script = ExtResource("2_blade")
+
+[node name="TrailLine" type="Line2D" parent="GameArea/Blade"]
+width = 8.0
+default_color = Color(1, 1, 1, 0.8)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="SliceArea" type="Area2D" parent="GameArea/Blade"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GameArea/Blade/SliceArea"]
+
+[node name="Spawner" type="Node2D" parent="GameArea"]
+script = ExtResource("3_spawner")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GameUI" parent="CanvasLayer" instance=ExtResource("4_ui")]
