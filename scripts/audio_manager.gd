@@ -34,24 +34,20 @@ func _ready() -> void:
 
 
 func _load_sfx_library() -> void:
-	# Define paths to sound effects
-	var sfx_paths = {
-		"slice": "res://assets/audio/sfx/slice.wav",
-		"slice_combo": "res://assets/audio/sfx/slice_combo.wav",
-		"explosion": "res://assets/audio/sfx/explosion.wav",
-		"whoosh": "res://assets/audio/sfx/whoosh.wav",
-		"game_over": "res://assets/audio/sfx/game_over.wav",
-		"button_click": "res://assets/audio/sfx/button_click.wav",
-		"countdown": "res://assets/audio/sfx/countdown.wav",
-		"new_highscore": "res://assets/audio/sfx/new_highscore.wav"
-	}
+	# Define sound effect names and try multiple formats
+	var sfx_names = ["slice", "slice_combo", "explosion", "whoosh", "game_over", "button_click", "countdown", "new_highscore"]
+	var formats = [".ogg", ".wav", ".mp3"]
 
-	for key in sfx_paths:
-		var path = sfx_paths[key]
-		if ResourceLoader.exists(path):
-			sfx_library[key] = load(path)
-		else:
-			push_warning("SFX not found: " + path)
+	for sfx_name in sfx_names:
+		var found = false
+		for format in formats:
+			var path = "res://assets/audio/sfx/" + sfx_name + format
+			if ResourceLoader.exists(path):
+				sfx_library[sfx_name] = load(path)
+				found = true
+				break
+		if not found:
+			pass  # Silently skip missing sounds for cleaner output
 
 
 func play_music(stream: AudioStream, fade_in: float = 0.5) -> void:
@@ -79,8 +75,7 @@ func stop_music(fade_out: float = 0.5) -> void:
 
 func play_sfx(sfx_name: String, pitch_variance: float = 0.1) -> void:
 	if not sfx_library.has(sfx_name):
-		push_warning("SFX not in library: " + sfx_name)
-		return
+		return  # Silently skip if sound not loaded
 
 	var player = _get_available_sfx_player()
 	if player:

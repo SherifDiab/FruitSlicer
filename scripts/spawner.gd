@@ -35,12 +35,30 @@ func _ready() -> void:
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 	add_child(spawn_timer)
 
+	# Auto-load scenes if not assigned in editor
+	_load_default_scenes()
+
 	# Calculate spawn points along the bottom of the screen
 	_setup_spawn_points()
 
 	# Connect to game signals
 	GameManager.game_started.connect(_on_game_started)
 	GameManager.game_over.connect(_on_game_over)
+
+
+func _load_default_scenes() -> void:
+	# Load fruit scene if not assigned
+	if fruit_scenes.is_empty():
+		var fruit_path = "res://scenes/fruit.tscn"
+		if ResourceLoader.exists(fruit_path):
+			var fruit_scene = load(fruit_path)
+			fruit_scenes.append(fruit_scene)
+
+	# Load bomb scene if not assigned
+	if not bomb_scene:
+		var bomb_path = "res://scenes/bomb.tscn"
+		if ResourceLoader.exists(bomb_path):
+			bomb_scene = load(bomb_path)
 
 
 func _setup_spawn_points() -> void:
