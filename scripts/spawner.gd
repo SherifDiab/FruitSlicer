@@ -188,25 +188,20 @@ func spawn_bomb(pos: Vector2) -> void:
 
 
 func _calculate_launch_velocity(spawn_pos: Vector2) -> Vector2:
-	var viewport_center_x = get_viewport_rect().size.x / 2.0
+	var viewport_size = get_viewport_rect().size
+	var viewport_center_x = viewport_size.x / 2.0
 
-	# Calculate angle based on position (outer positions aim more inward)
+	# Calculate horizontal direction (aim toward center)
 	var offset_from_center = spawn_pos.x - viewport_center_x
-	var base_angle = 90.0  # Straight up
+	var horizontal_bias = -offset_from_center * 0.3  # Push toward center
 
-	# Adjust angle to aim toward center
-	if abs(offset_from_center) > 50:
-		base_angle += (offset_from_center / viewport_center_x) * -20.0
+	# Add randomness to horizontal
+	var horizontal = horizontal_bias + randf_range(-100, 100)
 
-	# Add some randomness
-	var angle = deg_to_rad(randf_range(base_angle - 15, base_angle + 15))
+	# Strong upward velocity (negative Y = up in Godot)
+	var vertical = -randf_range(min_launch_force, max_launch_force)
 
-	# Calculate force
-	var force = randf_range(min_launch_force, max_launch_force)
-
-	# Create velocity vector (pointing up and slightly toward center)
-	var velocity = Vector2(cos(angle - PI/2), -sin(angle - PI/2)) * force
-
+	var velocity = Vector2(horizontal, vertical)
 	return velocity
 
 
