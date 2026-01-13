@@ -38,9 +38,6 @@ func _ready() -> void:
 	# Auto-load scenes if not assigned in editor
 	_load_default_scenes()
 
-	# Calculate spawn points along the bottom of the screen
-	_setup_spawn_points()
-
 	# Connect to game signals
 	GameManager.game_started.connect(_on_game_started)
 	GameManager.game_over.connect(_on_game_over)
@@ -53,6 +50,8 @@ func _load_default_scenes() -> void:
 		if ResourceLoader.exists(fruit_path):
 			var fruit_scene = load(fruit_path)
 			fruit_scenes.append(fruit_scene)
+		else:
+			print("ERROR: Could not find fruit scene at: ", fruit_path)
 
 	# Load bomb scene if not assigned
 	if not bomb_scene:
@@ -63,6 +62,13 @@ func _load_default_scenes() -> void:
 
 func _setup_spawn_points() -> void:
 	var viewport_size = get_viewport_rect().size
+	print("Viewport size: ", viewport_size)
+
+	# Fallback if viewport not ready
+	if viewport_size.x <= 0 or viewport_size.y <= 0:
+		viewport_size = Vector2(1080, 1920)  # Default mobile portrait
+		print("Using fallback viewport size")
+
 	var num_points = 5
 
 	spawn_points.clear()
@@ -71,10 +77,20 @@ func _setup_spawn_points() -> void:
 		var y = viewport_size.y + spawn_y_offset
 		spawn_points.append(Vector2(x, y))
 
+	print("Spawn points created: ", spawn_points)
+
 
 func _on_game_started(_mode: GameManager.GameMode) -> void:
+	# Setup spawn points now that viewport is ready
+	_setup_spawn_points()
+
 	spawn_rate_multiplier = initial_spawn_rate
 	is_spawning = true
+
+	print("Game started! Spawning enabled. Spawn points: ", spawn_points.size())
+	print("Fruit scenes loaded: ", fruit_scenes.size())
+
+	# Start spawning immediately
 	_schedule_next_spawn()
 
 
@@ -101,6 +117,8 @@ func _on_spawn_timer_timeout() -> void:
 
 
 func spawn_wave() -> void:
+	print("Spawning wave...")
+
 	# Determine wave size (1-3 fruits)
 	var wave_size = randi_range(1, 3)
 
@@ -110,6 +128,8 @@ func spawn_wave() -> void:
 	# Pick random spawn points for this wave
 	var available_points = spawn_points.duplicate()
 	available_points.shuffle()
+
+	print("Wave size: ", wave_size, " Available points: ", available_points.size())
 
 	for i in range(wave_size):
 		if i >= available_points.size():
@@ -127,7 +147,7 @@ func spawn_wave() -> void:
 
 func spawn_fruit(pos: Vector2) -> void:
 	if fruit_scenes.is_empty():
-		push_warning("No fruit scenes assigned to spawner!")
+		print("ERROR: No fruit scenes!")
 		return
 
 	var fruit_scene = fruit_scenes[randi() % fruit_scenes.size()]
@@ -145,22 +165,26 @@ func spawn_fruit(pos: Vector2) -> void:
 	fruit.juice_color = fruit_colors[randi() % fruit_colors.size()]
 
 	fruit.global_position = pos
-	fruit.set_initial_velocity(_calculate_launch_velocity(pos))
+	var velocity = _calculate_launch_velocity(pos)
+	fruit.set_initial_velocity(velocity)
 
-	get_parent().add_child(fruit)
+	get_tree().current_scene.add_child(fruit)
+	print("Fruit spawned at: ", pos, " velocity: ", velocity)
 
 
 func spawn_bomb(pos: Vector2) -> void:
 	if not bomb_scene:
-		push_warning("No bomb scene assigned to spawner!")
+		print("ERROR: No bomb scene!")
 		return
 
 	var bomb = bomb_scene.instantiate()
 
 	bomb.global_position = pos
-	bomb.set_initial_velocity(_calculate_launch_velocity(pos))
+	var velocity = _calculate_launch_velocity(pos)
+	bomb.set_initial_velocity(velocity)
 
-	get_parent().add_child(bomb)
+	get_tree().current_scene.add_child(bomb)
+	print("Bomb spawned at: ", pos, " velocity: ", velocity)
 
 
 func _calculate_launch_velocity(spawn_pos: Vector2) -> Vector2:
