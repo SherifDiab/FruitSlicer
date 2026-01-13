@@ -37,6 +37,9 @@ var combo_tween: Tween
 
 
 func _ready() -> void:
+	# Allow UI to work when game is paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# Connect game signals
 	GameManager.score_changed.connect(_on_score_changed)
 	GameManager.lives_changed.connect(_on_lives_changed)

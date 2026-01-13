@@ -131,7 +131,18 @@ func spawn_fruit(pos: Vector2) -> void:
 		return
 
 	var fruit_scene = fruit_scenes[randi() % fruit_scenes.size()]
-	var fruit = fruit_scene.instantiate() as Fruit
+	var fruit = fruit_scene.instantiate()
+
+	# Assign random fruit color for variety
+	var fruit_colors = [
+		Color.RED,        # Apple
+		Color.ORANGE,     # Orange
+		Color.YELLOW,     # Lemon
+		Color.GREEN,      # Watermelon
+		Color.PURPLE,     # Grape
+		Color(0.6, 0.4, 0.2)  # Kiwi
+	]
+	fruit.juice_color = fruit_colors[randi() % fruit_colors.size()]
 
 	fruit.global_position = pos
 	fruit.set_initial_velocity(_calculate_launch_velocity(pos))
@@ -144,7 +155,7 @@ func spawn_bomb(pos: Vector2) -> void:
 		push_warning("No bomb scene assigned to spawner!")
 		return
 
-	var bomb = bomb_scene.instantiate() as Bomb
+	var bomb = bomb_scene.instantiate()
 
 	bomb.global_position = pos
 	bomb.set_initial_velocity(_calculate_launch_velocity(pos))

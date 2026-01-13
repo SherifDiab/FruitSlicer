@@ -25,8 +25,12 @@ var initial_velocity: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
-	if sprite and sprite_texture:
-		sprite.texture = sprite_texture
+	if sprite:
+		if sprite_texture:
+			sprite.texture = sprite_texture
+		else:
+			# Create a default colored circle texture if none assigned
+			_create_default_texture()
 
 	if particles:
 		particles.modulate = juice_color
@@ -35,6 +39,24 @@ func _ready() -> void:
 	# Apply initial velocity
 	if initial_velocity != Vector2.ZERO:
 		linear_velocity = initial_velocity
+
+
+func _create_default_texture() -> void:
+	# Create a simple colored circle as placeholder
+	var img = Image.create(80, 80, false, Image.FORMAT_RGBA8)
+	var center = Vector2(40, 40)
+	var radius = 38.0
+
+	for x in range(80):
+		for y in range(80):
+			var dist = Vector2(x, y).distance_to(center)
+			if dist <= radius:
+				img.set_pixel(x, y, juice_color)
+			else:
+				img.set_pixel(x, y, Color.TRANSPARENT)
+
+	var tex = ImageTexture.create_from_image(img)
+	sprite.texture = tex
 
 
 func _physics_process(_delta: float) -> void:

@@ -20,12 +20,40 @@ var initial_velocity: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
+	# Create default bomb texture if none assigned
+	if sprite and not sprite.texture:
+		_create_default_texture()
+
 	if fuse_particles:
 		fuse_particles.emitting = true
 
 	# Apply initial velocity
 	if initial_velocity != Vector2.ZERO:
 		linear_velocity = initial_velocity
+
+
+func _create_default_texture() -> void:
+	# Create a simple black circle with red highlight as bomb
+	var img = Image.create(80, 80, false, Image.FORMAT_RGBA8)
+	var center = Vector2(40, 40)
+	var radius = 35.0
+
+	for x in range(80):
+		for y in range(80):
+			var dist = Vector2(x, y).distance_to(center)
+			if dist <= radius:
+				img.set_pixel(x, y, Color.BLACK)
+			elif dist <= radius + 3:
+				img.set_pixel(x, y, Color.DARK_GRAY)
+			else:
+				img.set_pixel(x, y, Color.TRANSPARENT)
+
+	# Add fuse line
+	for y in range(5, 20):
+		img.set_pixel(40, y, Color.ORANGE)
+
+	var tex = ImageTexture.create_from_image(img)
+	sprite.texture = tex
 
 
 func _physics_process(_delta: float) -> void:
